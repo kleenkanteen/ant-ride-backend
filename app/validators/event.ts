@@ -25,7 +25,7 @@ export const JoinParticipantsValidator = vine.compile(
     gender: vine.enum(['Male', 'Female']),
     address: vine.string().maxLength(50),
     can_pickup: vine.boolean(),
-    phone_num: vine.string().maxLength(15),
+    phone_num: vine.string().maxLength(10),
     seats_available: vine.number().withoutDecimals().min(0).max(7),
   })
 )
@@ -35,11 +35,11 @@ export const EditParticipantsValidator = vine.compile(
     event_code: vine.string().minLength(5).maxLength(5),
     edit_code: vine.string().minLength(5).maxLength(5),
     remove: vine.boolean(),
-    name: vine.string().maxLength(100),
-    gender: vine.enum(['Male', 'Female']),
-    address: vine.string().maxLength(50),
-    can_pickup: vine.boolean(),
-    phone_num: vine.string().maxLength(15),
-    seats_available: vine.number().withoutDecimals().min(0).max(7),
+    name: vine.string().maxLength(100).optional(),
+    gender: vine.enum(['Male', 'Female']).optional(),
+    address: vine.string().maxLength(50).optional(),
+    can_pickup: vine.boolean().optional(),
+    seats_available: vine.number().withoutDecimals().min(0).max(7).optional(),
+    phone_num: vine.string().maxLength(10).optional(),
   })
 )
