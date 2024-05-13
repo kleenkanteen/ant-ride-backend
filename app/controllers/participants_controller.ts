@@ -23,7 +23,7 @@ export default class ParticipantsController {
     } else if (event_data.length == 0) {
       return response.notFound({
         status: 'error',
-        message: 'Event code is not valid'
+        message: 'Event code is not valid',
       })
     }
 
@@ -42,7 +42,8 @@ export default class ParticipantsController {
     } else if (data1.length > 0) {
       return response.conflict({
         status: 'error',
-        message: 'You are already in the carpool, use your edit code! If you do not remember it, try again with a different name.'
+        message:
+          'You are already in the carpool, use your edit code! If you do not remember it, try again with a different name.',
       })
     }
 
@@ -58,7 +59,9 @@ export default class ParticipantsController {
         address: payload.address,
         can_pickup: payload.can_pickup,
         seats_available: payload.seats_available,
-      }).select()
+        phone_num: payload.phone_num,
+      })
+      .select()
 
     if (error) {
       return response.internalServerError({
@@ -69,7 +72,7 @@ export default class ParticipantsController {
       return response.ok({
         status: 'success',
         message: 'Carpool joined successfully!',
-        data: data
+        data: data,
       })
     }
   }
@@ -80,22 +83,24 @@ export default class ParticipantsController {
     // logic for removing participant
     if (payload.remove) {
       const { data, error } = await supabase
-      .from('participants')
-      .delete().match({
-        event_code: payload.event_code,
-        edit_code: payload.edit_code
-      }).select()
+        .from('participants')
+        .delete()
+        .match({
+          event_code: payload.event_code,
+          edit_code: payload.edit_code,
+        })
+        .select()
 
       // bad event code or edit code
       if (error || data.length === 0) {
         return response.internalServerError({
           status: 'error',
-          message: `Event code or edit code is invalid. Error message: ${error ? error.message: ''}`,
+          message: `Event code or edit code is invalid. Error message: ${error ? error.message : ''}`,
         })
       } else {
         return response.ok({
           status: 'success',
-          message: 'Successfully removed you from the carpool!'
+          message: 'Successfully removed you from the carpool!',
         })
       }
     }
@@ -109,10 +114,13 @@ export default class ParticipantsController {
         address: payload.address,
         can_pickup: payload.can_pickup,
         seats_available: payload.seats_available,
-      }).match({
+        phone_num: payload.phone_num,
+      })
+      .match({
         event_code: payload.event_code,
-        edit_code: payload.edit_code
-      }).select()
+        edit_code: payload.edit_code,
+      })
+      .select()
 
     if (error) {
       return response.internalServerError({
@@ -122,14 +130,13 @@ export default class ParticipantsController {
     } else if (data.length === 0) {
       return response.notFound({
         status: 'error',
-        message: 'Event code or edit code is invalid'
+        message: 'Event code or edit code is invalid',
       })
-    }
-    else {
+    } else {
       return response.ok({
         status: 'success',
         message: 'Your details were edited!',
-        data: data
+        data: data,
       })
     }
   }

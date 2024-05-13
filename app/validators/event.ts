@@ -25,7 +25,8 @@ export const JoinParticipantsValidator = vine.compile(
     gender: vine.enum(['Male', 'Female']),
     address: vine.string().maxLength(50),
     can_pickup: vine.boolean(),
-    seats_available: vine.number().withoutDecimals().min(0).max(7)
+    phone_num: vine.string().maxLength(15),
+    seats_available: vine.number().withoutDecimals().min(0).max(7),
   })
 )
 
@@ -38,6 +39,7 @@ export const EditParticipantsValidator = vine.compile(
     gender: vine.enum(['Male', 'Female']),
     address: vine.string().maxLength(50),
     can_pickup: vine.boolean(),
-    seats_available: vine.number().withoutDecimals().min(0).max(7)
+    phone_num: vine.string().maxLength(15),
+    seats_available: vine.number().withoutDecimals().min(0).max(7),
   })
 )
