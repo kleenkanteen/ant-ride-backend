@@ -43,3 +43,10 @@ export const EditParticipantsValidator = vine.compile(
     seats_available: vine.number().withoutDecimals().min(0).max(7),
   })
 )
+
+export const CreateCarpoolsValidator = vine.compile(
+  vine.object({
+    event_code: vine.string().minLength(5).maxLength(5),
+    password: vine.string().maxLength(100),
+  })
+)
