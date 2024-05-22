@@ -34,12 +34,13 @@ export const EditParticipantsValidator = vine.compile(
   vine.object({
     event_code: vine.string().minLength(5).maxLength(5),
     edit_code: vine.string().minLength(5).maxLength(5),
-    remove: vine.boolean(),
-    name: vine.string().maxLength(100),
-    phone_num: vine.string().maxLength(15),
-    gender: vine.enum(['Male', 'Female']),
-    address: vine.string().maxLength(100),
-    can_pickup: vine.boolean(),
-    seats_available: vine.number().withoutDecimals().min(0).max(7),
+    remove: vine.boolean().optional(),
+    name: vine.string().maxLength(100).optional(),
+    gender: vine.enum(['Male', 'Female']).optional(),
+    address: vine.string().maxLength(50).optional(),
+    can_pickup: vine.boolean().optional(),
+    seats_available: vine.number().withoutDecimals().min(0).max(7).optional(),
+    confirmed: vine.boolean().optional(),
+    phone_num: vine.string().maxLength(10).optional(),
   })
 )
