@@ -1,0 +1,28 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "carpools",
+    "collectionId": "02dc527f-d318-4474-bc4d-5fff6e829b8d",
+    "dateExported": "2024-05-26T22:07:40.005Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "0ab9c647-880c-484a-8dac-4dcab5b0ad87",
+            "colId": "02dc527f-d318-4474-bc4d-5fff6e829b8d",
+            "containerId": "",
+            "name": "create carpool",
+            "url": "[::1]:3333/carpools",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-05-26T21:49:42.057Z",
+            "modified": "2024-05-26T21:54:26.641Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"event_code\": \"8aTIl\",\n  \"password\": \"928dcfaaf338f43baac2de274e683c73cfa67de87a235ac55fafc55b09bc25d5\"\n}",
+                "form": []
+            }
+        }
+    ],
+    "ref": "4JpiM_MdQmCZxgacjMK5iG86HG5FTL5jLBeG-q-a_i9Cg0zicRx1Rs-fe--ydYCH2HIAWnQhV2cR25fii0uEhQ"
+}

@@ -1,0 +1,45 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "event",
+    "collectionId": "33259bc8-772a-4de0-8fad-ec367c1e2b6c",
+    "dateExported": "2024-05-26T22:07:26.488Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "de552f6c-b588-4971-9ebf-5a7d4624872c",
+            "colId": "33259bc8-772a-4de0-8fad-ec367c1e2b6c",
+            "containerId": "",
+            "name": "create event",
+            "url": "[::1]:3333/event",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-05-26T21:53:57.714Z",
+            "modified": "2024-05-26T21:55:21.556Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"My first trip\",\n  \"address\": \"Florida, USA\",\n  \"date_time\": \"2024-06-01 12:00:00+00\"\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "aca133ef-cb76-408f-a491-753d216c3db8",
+            "colId": "33259bc8-772a-4de0-8fad-ec367c1e2b6c",
+            "containerId": "",
+            "name": "edit event",
+            "url": "[::1]:3333/event",
+            "method": "PUT",
+            "sortNum": 40000,
+            "created": "2024-05-26T21:58:41.820Z",
+            "modified": "2024-05-26T21:58:59.819Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"event_code\": \"KIXsr\",\n  \"edit_code\": \"IJqNn\",\n  \"name\": \"My first trip\",\n  \"address\": \"Miami Beach, FL, USA\",\n  \"date_time\": \"2024-07-01 12:00:00+00\"\n}",
+                "form": []
+            }
+        }
+    ],
+    "ref": "VyQz2Ob-ZzH9He8e3yHL9jWW0cd8jf_ndLvFGZXjTnZVk0xrNTF5hiOChtfkxyvP1XVl9JV4POh458p2NYzr5Q"
+}
