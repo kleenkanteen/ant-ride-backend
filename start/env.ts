@@ -26,4 +26,5 @@ export default await Env.create(new URL('../', import.meta.url), {
   MODE: Env.schema.enum(['DEV', 'PROD'] as const),
   PERSONAL_NUMBER: Env.schema.string(),
   TWILIO_NUMBER: Env.schema.string(),
+  CRON_JOB_KEY: Env.schema.string(),
 })

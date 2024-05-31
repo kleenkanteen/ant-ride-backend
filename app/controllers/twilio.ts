@@ -45,11 +45,11 @@ export async function send_carpools_sms(unassigned_drivers: any,
                                         assigned_drivers: any,
                                         assigned_riders: any) {
   // send messages to everyone saying if they got matched or not, and all relevant details
-  for (const [key, value] of Object.entries(unassigned_drivers)) {
+  for (const [key] of Object.entries(unassigned_drivers)) {
     send_sms("Hello from ant ride.\n\nUnfortunately you were not able to be matched into a ride. You will have to drive by yourself.", key)
   }
 
-  for (const [key, value] of Object.entries(unassigned_riders)) {
+  for (const [key] of Object.entries(unassigned_riders)) {
     send_sms("Hello from ant ride.\n\nUnfortunately you were not able to be matched into a ride. You will have to arrange your own transport.", key)
   }
 
