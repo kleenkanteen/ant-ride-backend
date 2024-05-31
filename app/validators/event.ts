@@ -44,3 +44,12 @@ export const EditParticipantsValidator = vine.compile(
     phone_num: vine.string().maxLength(10).optional(),
   })
 )
+
+export const CreateCarpoolsValidator = vine.compile(
+  vine.object({
+    event_code: vine.string().minLength(5).maxLength(5),
+    password: vine.string().maxLength(100),
+    gender: vine.enum(['Male', 'Female']),
+    confirmed: vine.boolean(),
+  })
+)
