@@ -4,6 +4,7 @@ import { EditEventValidator } from '#validators/event'
 
 import { supabase } from '#start/supabase'
 import { nanoid } from 'nanoid'
+import { createCronJob } from '#utils/cron-job'
 
 export default class EventsController {
   async create({ request, response }: HttpContext) {
@@ -26,6 +27,7 @@ export default class EventsController {
         message: `Unable to create event, error message: ${error.message}`,
       })
     } else {
+      createCronJob(payload.date_time, event_code)
       return response.ok({
         status: 'success',
         message: 'Event created successfully!',
