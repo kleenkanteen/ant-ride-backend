@@ -21,4 +21,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   SUPABASE_SERVICE_ROLE_KEY: Env.schema.string(),
   CARPOOL_PASSWORD: Env.schema.string(),
   GEOAPIFY_KEY: Env.schema.string(),
+  TWILIO_ACCOUNT_SID: Env.schema.string(),
+  TWILIO_AUTH_TOKEN: Env.schema.string(),
+  MODE: Env.schema.enum(['DEV', 'PROD'] as const),
+  PERSONAL_NUMBER: Env.schema.string(),
+  TWILIO_NUMBER: Env.schema.string(),
 })

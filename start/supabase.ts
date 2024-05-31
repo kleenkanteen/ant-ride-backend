@@ -8,4 +8,5 @@ if (!supabaseUrl || !supabaseServiceKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
+// https://supabase.com/docs/reference/javascript/introduction
 export const supabase = createClient(supabaseUrl, supabaseServiceKey)
