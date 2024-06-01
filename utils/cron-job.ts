@@ -24,7 +24,7 @@ export async function createCronJob(date_time: any, event_code: string) {
   // confirmation sms 48 hrs before for males and females separately. confirmed=false
   // final carpool notification for males and females separately. confirmed=true
   const genders = ["Male", "Female"]
-  const time: [string[], boolean][] = [[forty_eight_hrs_before_cron_array, false], [twenty_four_hrs_before_cron_array, true]]
+  const times: [string[], boolean][] = [[forty_eight_hrs_before_cron_array, false], [twenty_four_hrs_before_cron_array, true]]
 
   async function sendCron(gender: string, cron_array: string[], confirmed: boolean) {
     try {
@@ -74,10 +74,12 @@ export async function createCronJob(date_time: any, event_code: string) {
     }
   }
 
-  genders.forEach((gender: string) => {
-    time.forEach(async (cron_details: [string[], boolean]) => {
-      sendCron(gender, cron_details[0], cron_details[1])
-      await new Promise(resolve => setTimeout(resolve, 2000))
-    })
-  })
+  for (const gender of genders) {
+    for (const cronDetails of times) {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log("CRON JOB SENT FOR", gender);
+      await sendCron(gender, cronDetails[0], cronDetails[1]);
+    }
+  }
+
 }
