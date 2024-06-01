@@ -77,7 +77,6 @@ export async function createCronJob(date_time: any, event_code: string) {
   for (const gender of genders) {
     for (const cronDetails of times) {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log("CRON JOB SENT FOR", gender);
       await sendCron(gender, cronDetails[0], cronDetails[1]);
     }
   }
