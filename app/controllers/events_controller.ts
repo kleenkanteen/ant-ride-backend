@@ -1,8 +1,8 @@
+import { CreateEventValidator, EditEventValidator } from '#validators/event'
 import type { HttpContext } from '@adonisjs/core/http'
-import { CreateEventValidator } from '#validators/event'
-import { EditEventValidator } from '#validators/event'
 
 import { supabase } from '#start/supabase'
+import { createCronJob } from '#utils/cron-job'
 import { nanoid } from 'nanoid'
 
 export default class EventsController {
@@ -26,6 +26,8 @@ export default class EventsController {
         message: `Unable to create event, error message: ${error.message}`,
       })
     } else {
+      // confirmation sms's will be sent 48 hours before carpool. optimized carpools will be made 24 hours
+      createCronJob(payload.date_time, event_code)
       return response.ok({
         status: 'success',
         message: 'Event created successfully!',
