@@ -105,16 +105,13 @@ export default class ParticipantsController {
       }
     }
 
+    delete payload?.remove
+
     // data is good, update participant details
     const { data, error } = await supabase
       .from('participants')
       .update({
-        name: payload.name,
-        gender: payload.gender,
-        address: payload.address,
-        can_pickup: payload.can_pickup,
-        seats_available: payload.seats_available,
-        phone_num: payload.phone_num,
+        ...payload,
       })
       .match({
         event_code: payload.event_code,
