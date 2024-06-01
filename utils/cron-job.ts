@@ -75,8 +75,9 @@ export async function createCronJob(date_time: any, event_code: string) {
   }
 
   genders.forEach((gender: string) => {
-    time.forEach((cron_details: [string[], boolean]) => {
+    time.forEach(async (cron_details: [string[], boolean]) => {
       sendCron(gender, cron_details[0], cron_details[1])
+      await new Promise(resolve => setTimeout(resolve, 2000))
     })
   })
 }
