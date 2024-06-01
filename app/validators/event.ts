@@ -53,12 +53,3 @@ export const CreateCarpoolsValidator = vine.compile(
     confirmed: vine.boolean(),
   })
 )
-
-export const CreateCarpoolsValidator = vine.compile(
-  vine.object({
-    event_code: vine.string().minLength(5).maxLength(5),
-    password: vine.string().maxLength(100),
-    gender: vine.enum(['Male', 'Female']),
-    confirmed: vine.boolean(),
-  })
-)
