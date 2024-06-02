@@ -2,7 +2,7 @@ import env from '#start/env'
 import twilio from 'twilio';
 
 let client: any
-export function twilio_client() {
+export function init_twilio_client() {
   const account_sid = env.get('TWILIO_ACCOUNT_SID')
   const auth_token = env.get('TWILIO_AUTH_TOKEN')
 

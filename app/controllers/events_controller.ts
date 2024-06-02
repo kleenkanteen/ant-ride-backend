@@ -1,8 +1,8 @@
 import { CreateEventValidator, EditEventValidator } from '#validators/event'
 import type { HttpContext } from '@adonisjs/core/http'
 
+import { createCronJob } from '#controllers/utils/cron-job'
 import { supabase } from '#start/supabase'
-import { createCronJob } from '#utils/cron-job'
 import { nanoid } from 'nanoid'
 
 export default class EventsController {
