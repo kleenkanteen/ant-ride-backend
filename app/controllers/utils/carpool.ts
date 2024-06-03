@@ -65,7 +65,6 @@ export function create_google_maps_route_link(geoapify_response: any,
   // https://developers.google.com/maps/documentation/urls/get-started
   // route through each driver (aka agent)
   geoapify_response.features.forEach((agent: any) => {
-    console.log(carpool_groups)
     let driver = JSON.parse(carpool_groups.all_drivers[agent.properties.agent_index].description)
     let driver_address = driver.address
     let driver_number = driver.number
@@ -175,7 +174,6 @@ export async function generate_carpool_routes_geojson(event_code: string, carpoo
   let geojson: any = {}
 
   for (const agent of carpools.features) {
-    console.log("WAYPOINTS", agent.properties.waypoints)
     // create a pipe separated string of lat, long for each pickup point for a driver, in order of pickup
     let waypoints = agent.properties.waypoints.map((waypoint: any) => waypoint.location[1] + ',' + waypoint.location[0]).join('|')
 
