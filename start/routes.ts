@@ -20,3 +20,4 @@ router.post('participant', [ParticipantsController, 'create'])
 router.put('participant', [ParticipantsController, 'edit'])
 
 router.post('carpools', [CarpoolsController, 'create'])
+router.get('carpools', [CarpoolsController, 'get'])
