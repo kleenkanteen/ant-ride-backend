@@ -1,4 +1,3 @@
-import { drivers } from '@adonisjs/core/hash';
 import Env from '#start/env';
 import { supabase } from '#start/supabase';
 import ky from 'ky';
