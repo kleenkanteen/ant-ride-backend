@@ -108,10 +108,21 @@ export function create_google_maps_route_link(geoapify_response: any,
 
 export async function geoapify_create_optimized_carpools(data: any, riders: any, drivers: any) {
   // confirmed participants only, time to make carpools
-  const drivers_formatted = drivers.map((driver: any) => {
+  let drivers_formatted = drivers.map(async (driver: any) => {
     const split_driver_address = driver.address.split('|')
     const event_address = data[0].address.split('|')
 
+    // create a pipe separated string of lat, long for each pickup point for a driver, in order of pickup
+    const GEOAPIFY_KEY = Env.get("GEOAPIFY_KEY")
+    let waypoints = split_driver_address[1] + ',' + split_driver_address[2] + '|' + event_address[1] + ',' + event_address[2]
+    let single_driver_route: any
+    try {
+      single_driver_route = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${encodeURIComponent(waypoints)}&mode=drive&format=json&apiKey=${GEOAPIFY_KEY}`).then(res => res.json())
+    } catch (error) {
+      throw new Error(`Could not get direct routes for every driver ${error}`)
+    }
+    // // rount single_driver_route.results[0].time to nearest second
+    let normal_driving_time = Math.round(single_driver_route.results[0].time)
     return {
       "start_location": [
         // for some reason geoapify orders it as long, lat, which is backwards form the norm of lat, long
@@ -125,7 +136,8 @@ export async function geoapify_create_optimized_carpools(data: any, riders: any,
       "time_windows": [
         [
           0,
-          2100
+          // add 20 mins on top of normal driving time
+          normal_driving_time + 1200
         ]
       ],
       "pickup_capacity": driver.seats_available,
@@ -136,6 +148,7 @@ export async function geoapify_create_optimized_carpools(data: any, riders: any,
       })
     }
   })
+  drivers_formatted = await Promise.all(drivers_formatted)
 
   const riders_formatted = riders.map((rider: any) => {
     const split_address = rider.address.split('|')
@@ -157,7 +170,9 @@ export async function geoapify_create_optimized_carpools(data: any, riders: any,
   // docs: https://apidocs.geoapify.com/docs/route-planner/#about
   // example of using route planner api: https://www.geoapify.com/route-and-schedule-optimization-for-workers-with-route-planner-api
   const GEOAPIFY_KEY = Env.get("GEOAPIFY_KEY")
-  let res: any = await ky.post(`https://api.geoapify.com/v1/routeplanner?apiKey=${GEOAPIFY_KEY}`, {
+  let res: any
+  try {
+    res = await ky.post(`https://api.geoapify.com/v1/routeplanner?apiKey=${GEOAPIFY_KEY}`, {
     json:
     {
       "mode": "drive",
@@ -166,6 +181,9 @@ export async function geoapify_create_optimized_carpools(data: any, riders: any,
     }
   }
   ).json()
+  } catch (error) {
+    throw new Error(`Could not create optimized carpools ${error}`)
+  }
   return res
 }
 
