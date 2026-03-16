@@ -1,8 +1,5 @@
 export default [
   {
-    rules: {
-      'object-property-newline': 'false',
-    },
+    ignores: ["convex/_generated/**", "node_modules/**"],
   },
-]
-
+];
