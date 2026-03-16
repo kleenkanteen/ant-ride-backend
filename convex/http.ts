@@ -11,17 +11,16 @@ type Gender = "Male" | "Female";
 function corsHeaders(request: Request): Record<string, string> {
   const requestedHeaders =
     request.headers.get("access-control-request-headers") ??
-    "content-type,authorization,accept";
+    "Content-Type, Digest, Authorization, Accept";
   const requestedMethod =
     request.headers.get("access-control-request-method") ??
     "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS";
 
   return {
-    "access-control-allow-origin": "*",
-    "access-control-allow-methods": requestedMethod,
-    "access-control-allow-headers": requestedHeaders,
-    "access-control-allow-credentials": "false",
-    "access-control-max-age": "86400",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": requestedMethod,
+    "Access-Control-Allow-Headers": requestedHeaders,
+    "Access-Control-Max-Age": "86400",
     vary: "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
   };
 }
@@ -38,10 +37,11 @@ class HttpError extends Error {
 function jsonResponse(request: Request, status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      "content-type": "application/json",
-      ...corsHeaders(request),
-    },
+    headers: new Headers({
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      Vary: "origin",
+    }),
   });
 }
 
