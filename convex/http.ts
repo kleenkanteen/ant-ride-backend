@@ -8,22 +8,16 @@ const http = httpRouter();
 type JsonObject = Record<string, unknown>;
 type Gender = "Male" | "Female";
 
-function corsHeaders(request: Request): Record<string, string> {
-  const requestedHeaders =
-    request.headers.get("access-control-request-headers") ??
-    "Content-Type, Digest, Authorization, Accept";
-  const requestedMethod =
-    request.headers.get("access-control-request-method") ??
-    "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS";
-
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": requestedMethod,
-    "Access-Control-Allow-Headers": requestedHeaders,
-    "Access-Control-Max-Age": "86400",
-    vary: "Origin, Access-Control-Request-Method, Access-Control-Request-Headers",
-  };
-}
+const optionsHandler = httpAction(async (_ctx, _request) => {
+	return new Response(null, {
+		status: 204,
+		headers: {
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+		},
+	});
+});
 
 class HttpError extends Error {
   status: number;
@@ -36,40 +30,11 @@ class HttpError extends Error {
 
 function jsonResponse(request: Request, status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
-    status,
+    status: status,
     headers: new Headers({
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
-      Vary: "origin",
     }),
-  });
-}
-
-async function proxyTrailingSlashRequest(request: Request): Promise<Response | null> {
-  const url = new URL(request.url);
-  if (!url.pathname.endsWith("/")) {
-    return null;
-  }
-
-  const canonicalPath = url.pathname.slice(0, -1);
-  if (!["/event", "/participant", "/carpools"].includes(canonicalPath)) {
-    return null;
-  }
-
-  url.pathname = canonicalPath;
-  const headers = new Headers(request.headers);
-  headers.delete("host");
-  headers.delete("content-length");
-
-  const body =
-    request.method === "GET" || request.method === "HEAD" || request.method === "OPTIONS"
-      ? undefined
-      : await request.arrayBuffer();
-
-  return fetch(url.toString(), {
-    method: request.method,
-    headers,
-    body,
   });
 }
 
@@ -580,106 +545,19 @@ http.route({
 http.route({
   path: "/event",
   method: "OPTIONS",
-  handler: httpAction(async (_ctx, request) => {
-    const headers = request.headers;
-    if (
-      headers.get("Origin") !== null &&
-      headers.get("Access-Control-Request-Method") !== null &&
-      headers.get("Access-Control-Request-Headers") !== null
-    ) {
-      return new Response(null, {
-        headers: new Headers({
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST,PUT,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Digest, Authorization, Accept",
-          "Access-Control-Max-Age": "86400",
-        }),
-      });
-    } else {
-      return new Response(null, {
-        headers: new Headers(corsHeaders(request)),
-      });
-    }
-  }),
+  handler: optionsHandler,
 });
 
 http.route({
   path: "/participant",
   method: "OPTIONS",
-  handler: httpAction(async (_ctx, request) => {
-    const headers = request.headers;
-    if (
-      headers.get("Origin") !== null &&
-      headers.get("Access-Control-Request-Method") !== null &&
-      headers.get("Access-Control-Request-Headers") !== null
-    ) {
-      return new Response(null, {
-        headers: new Headers({
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST,PUT,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Digest, Authorization, Accept",
-          "Access-Control-Max-Age": "86400",
-        }),
-      });
-    } else {
-      return new Response(null, {
-        headers: new Headers(corsHeaders(request)),
-      });
-    }
-  }),
+  handler: optionsHandler,
 });
 
 http.route({
   path: "/carpools",
   method: "OPTIONS",
-  handler: httpAction(async (_ctx, request) => {
-    const headers = request.headers;
-    if (
-      headers.get("Origin") !== null &&
-      headers.get("Access-Control-Request-Method") !== null &&
-      headers.get("Access-Control-Request-Headers") !== null
-    ) {
-      return new Response(null, {
-        headers: new Headers({
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Digest, Authorization, Accept",
-          "Access-Control-Max-Age": "86400",
-        }),
-      });
-    } else {
-      return new Response(null, {
-        headers: new Headers(corsHeaders(request)),
-      });
-    }
-  }),
+  handler: optionsHandler,
 });
-
-for (const method of ["GET", "POST", "PUT", "OPTIONS"] as const) {
-  http.route({
-    pathPrefix: "/",
-    method,
-    handler: httpAction(async (_ctx, request) => {
-      try {
-        const proxied = await proxyTrailingSlashRequest(request);
-        if (proxied) {
-          return proxied;
-        }
-
-        return jsonResponse(request, 404, {
-          status: "error",
-          message: "Route not found",
-        });
-      } catch (error) {
-        return jsonResponse(request, 500, {
-          status: "error",
-          message: `Unable to process request: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        });
-      }
-    }),
-  });
-}
 
 export default http;
