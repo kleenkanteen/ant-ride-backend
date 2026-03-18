@@ -4,6 +4,12 @@ import { v } from "convex/values";
 const gender = v.union(v.literal("Male"), v.literal("Female"));
 
 export default defineSchema({
+  rate_limits: defineTable({
+    client_key: v.string(),
+    request_count: v.number(),
+    window_start_ms: v.number(),
+  }).index("by_client_key", ["client_key"]),
+
   events: defineTable({
     name: v.string(),
     address: v.string(),

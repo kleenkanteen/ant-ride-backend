@@ -8,6 +8,9 @@ const http = httpRouter();
 type JsonObject = Record<string, unknown>;
 type Gender = "Male" | "Female";
 
+const RATE_LIMIT_MAX_REQUESTS = 20;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+
 const optionsHandler = httpAction(async (_ctx, _request) => {
 	return new Response(null, {
 		status: 204,
@@ -36,6 +39,56 @@ function jsonResponse(request: Request, status: number, body: unknown): Response
       "Access-Control-Allow-Origin": "*",
     }),
   });
+}
+
+function getClientIp(request: Request): string {
+  const xForwardedFor = request.headers.get("x-forwarded-for");
+  if (xForwardedFor) {
+    const firstIp = xForwardedFor.split(",")[0]?.trim();
+    if (firstIp) {
+      return firstIp;
+    }
+  }
+
+  const xRealIp = request.headers.get("x-real-ip")?.trim();
+  if (xRealIp) {
+    return xRealIp;
+  }
+
+  const cloudflareIp = request.headers.get("cf-connecting-ip")?.trim();
+  if (cloudflareIp) {
+    return cloudflareIp;
+  }
+
+  return "unknown";
+}
+
+async function enforceRateLimit(ctx: any, request: Request): Promise<Response | null> {
+  const rateLimitResult = await ctx.runMutation(api.rateLimit.consumeRequest, {
+    client_key: getClientIp(request),
+    now_ms: Date.now(),
+    limit: RATE_LIMIT_MAX_REQUESTS,
+    window_ms: RATE_LIMIT_WINDOW_MS,
+  });
+
+  if (rateLimitResult.allowed) {
+    return null;
+  }
+
+  return new Response(
+    JSON.stringify({
+      status: "error",
+      message: "Too many requests. Please try again later.",
+    }),
+    {
+      status: 429,
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+        "Retry-After": String(rateLimitResult.retry_after_seconds),
+      }),
+    }
+  );
 }
 
 function isObject(value: unknown): value is JsonObject {
@@ -179,6 +232,11 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const payload = await parseJsonObject(request);
       const name = requiredString(payload, "name", { max: 50 });
       const address = requiredString(payload, "address", { max: 100 });
@@ -232,6 +290,11 @@ http.route({
   method: "PUT",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const payload = await parseJsonObject(request);
       const event_code = requiredString(payload, "event_code", { exact: 5 });
       const edit_code = requiredString(payload, "edit_code", { exact: 5 });
@@ -282,6 +345,11 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const payload = await parseJsonObject(request);
       const event_code = requiredString(payload, "event_code", { exact: 5 });
       const name = requiredString(payload, "name", { max: 50 });
@@ -351,6 +419,11 @@ http.route({
   method: "PUT",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const payload = await parseJsonObject(request);
       const event_code = requiredString(payload, "event_code", { exact: 5 });
       const edit_code = requiredString(payload, "edit_code", { exact: 5 });
@@ -422,6 +495,11 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const payload = await parseJsonObject(request);
       const event_code = requiredString(payload, "event_code", { exact: 5 });
       const password = requiredString(payload, "password", { max: 100 });
@@ -513,6 +591,11 @@ http.route({
   method: "GET",
   handler: httpAction(async (ctx, request) => {
     try {
+      const rateLimitResponse = await enforceRateLimit(ctx, request);
+      if (rateLimitResponse) {
+        return rateLimitResponse;
+      }
+
       const event_code = new URL(request.url).searchParams.get("event-code") ?? "";
 
       const data = await ctx.runQuery(api.events.getCarpoolDataByCode, {
